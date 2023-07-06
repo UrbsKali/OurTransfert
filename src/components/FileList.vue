@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th v-if="!isMobile"></th>
-                <th @click="sortByName(STATE.name)" style="cursor: pointer;">Name <span v-show="STATE.name === true">▲</span> <span v-show="STATE.name === null">▼</span></th>
+                <th @click="sortByName(STATE.name)" style="cursor: pointer;" id="name">Name <span v-show="STATE.name === true">▲</span> <span v-show="STATE.name === null">▼</span></th>
                 <th @click="sortBySize(STATE.size)" style="cursor: pointer;">Size <span v-show="STATE.size === true">▲</span> <span v-show="STATE.size === null">▼</span></th>
                 <th @click="sortByType(STATE.type)" style="cursor: pointer;">Type <span v-show="STATE.type === true">▲</span> <span v-show="STATE.type === null">▼</span></th>
                 <th @click="sortByDate(STATE.date)" style="cursor: pointer;">Date <span v-show="STATE.date === true">▲</span> <span v-show="STATE.date === null">▼</span></th>
@@ -15,7 +15,7 @@
                 <td  v-if="!isMobile">
                     <img :src="`/src/assets/file-64/${file.type.toLowerCase()}.png`" alt="" srcset="" width="32" height="32">
                 </td>
-                <td>{{ cropName(file.name) }}</td>
+                <td>{{ file.name.length >= maxNameLength ? file.name.slice(0,maxNameLength) + '...' : file.name }}</td>
                 <td>{{ formatBytes(file.size) }}</td>
                 <td>{{ file.type }}</td>
                 <td>{{ file.date }}</td>
@@ -39,7 +39,17 @@
     let STATE = ref({name: false, size: false, type: false, date: false})
     window.addEventListener('resize', () => {
         width.value = document.body.clientWidth
+        nameWidth.value = document.querySelector("#name").clientWidth
+        console.log(nameWidth.value)
+        console.log(maxNameLength.value)
     })
+
+    let nameWidth = ref(0)
+    document.addEventListener('DOMContentLoaded', () => {
+        nameWidth.value = document.querySelector("#name").clientWidth
+    })
+
+    const maxNameLength = computed(() => nameWidth.value / 10)
 
     watch(searching => {
         sortBySearch()
@@ -51,13 +61,6 @@
         }
         sortedFiles.value = props.files.filter(file => file.name.toLowerCase().includes(props.searching.toLowerCase()))
         STATE.value = {name: false, size: false, type: false, date: false}
-    }
-
-    function cropName(name) {
-        if (name.length > 25) {
-            return name.slice(0, 25) + '...'
-        }
-        return name
     }
 
     function formatBytes(bytes, decimals = 0) {
