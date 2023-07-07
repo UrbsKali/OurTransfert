@@ -1,9 +1,9 @@
 
 <template>
   <main>
-    <SearchBar v-model="search" />
-    <FileList :is_admin="true" :files="files" :searching="search"/>
-    <AddButton />
+    <SearchBar v-model:input="search" v-model:is_admin="is_admin" password="test"/>
+    <FileList :is_admin="is_admin" :files="files" :searching="search"/>
+    <AddButton v-if="is_admin"/>
   </main>
 </template>
 
@@ -13,8 +13,9 @@
   import SearchBar from '../components/SearchBar.vue';
   import { ref } from 'vue'
 
+  let is_admin = ref(false)
+
   let search = ref('')
-  console.log(search.value)
 
   let files = ref([
     {
@@ -34,7 +35,7 @@
     },
     {
         name: 'file3',
-        size: '12000',
+        size: '950000',
         type: 'EXE',
         date: '2022-01-26',
         id: 3
@@ -50,7 +51,7 @@
         name: 'Terminator',
         size: '52000000000',
         type: 'MP4',
-        date: '2021-01-01',
+        date: '2022-12-24',
         id: 5
     },
     {

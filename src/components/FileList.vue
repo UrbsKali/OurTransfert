@@ -40,8 +40,6 @@
     window.addEventListener('resize', () => {
         width.value = document.body.clientWidth
         nameWidth.value = document.querySelector("#name").clientWidth
-        console.log(nameWidth.value)
-        console.log(maxNameLength.value)
     })
 
     let nameWidth = ref(0)
@@ -51,16 +49,19 @@
 
     const maxNameLength = computed(() => nameWidth.value / 10)
 
-    watch(searching => {
+    watch(() => props.searching, () => {
         sortBySearch()
     })
 
     function sortBySearch() {
-        if (props.searching === '') {
+        if (props.searching != '')  {
+            console.log("Searching")
+            sortedFiles.value = props.files.filter(file => file.name.toLowerCase().includes(props.searching.toLowerCase()))
+            STATE.value = {name: false, size: false, type: false, date: false}
+        } else {
             sortByID()
+            STATE.value = {name: false, size: false, type: false, date: false}
         }
-        sortedFiles.value = props.files.filter(file => file.name.toLowerCase().includes(props.searching.toLowerCase()))
-        STATE.value = {name: false, size: false, type: false, date: false}
     }
 
     function formatBytes(bytes, decimals = 0) {
@@ -77,55 +78,60 @@
 
     function sortByName(reverse = false) {
         if (reverse) {
-            sortedFiles.value = props.files.sort((a, b) => b.name.localeCompare(a.name))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => b.name.localeCompare(a.name))
             STATE.value = {name: null, size: false, type: false, date: false}
         } else if (reverse === null){
-            sortByID()
+            sortBySearch()
             STATE.value = {name: false, size: false, type: false, date: false}
         } else {
-            sortedFiles.value = props.files.sort((a, b) => a.name.localeCompare(b.name))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => a.name.localeCompare(b.name))
             STATE.value = {name: true, size: false, type: false, date: false}
         }
     }
     function sortBySize(reverse = false) {
         if (reverse) {
-            sortedFiles.value = props.files.sort((a, b) => b.size - a.size)
+            sortedFiles.value = sortedFiles.value.sort((a, b) => b.size - a.size)
             STATE.value = {name: false, size: null, type: false, date: false}
         } else if (reverse === null){
-            sortByID()
+            sortBySearch()
             STATE.value = {name: false, size: false, type: false, date: false}
         } else {
-            sortedFiles.value = props.files.sort((a, b) => a.size - b.size)
+            sortedFiles.value = sortedFiles.value.sort((a, b) => a.size - b.size)
             STATE.value = {name: false, size: true, type: false, date: false}
         }
     }
     function sortByDate(reverse = false) {
         if (reverse) {
-            sortedFiles.value = props.files.sort((a, b) => new Date(b.date) - new Date(a.date))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => new Date(b.date) - new Date(a.date))
             STATE.value = {name: false, size: false, type: false, date: null}
         } else if (reverse === null){
-            sortByID()
+            sortBySearch()
             STATE.value = {name: false, size: false, type: false, date: false}
         } else {
-            sortedFiles.value = props.files.sort((a, b) => new Date(a.date) - new Date(b.date))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => new Date(a.date) - new Date(b.date))
             STATE.value = {name: false, size: false, type: false, date: true}
         }
         
     }
     function sortByType(reverse = false) {
         if (reverse) {
-            sortedFiles.value = props.files.sort((a, b) => a.type.localeCompare(b.type))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => a.type.localeCompare(b.type))
             STATE.value = {name: false, size: false, type: null, date: false}
         } else if (reverse === null){
-            sortByID()
+            sortBySearch()
             STATE.value = {name: false, size: false, type: false, date: false}
         } else {
-            sortedFiles.value = props.files.sort((a, b) => b.type.localeCompare(a.type))
+            sortedFiles.value = sortedFiles.value.sort((a, b) => b.type.localeCompare(a.type))
             STATE.value = {name: false, size: false, type: true, date: false}
         }
     }
     function sortByID() {
-        sortedFiles.value = props.files.sort((a, b) => a.id - b.id)
+        console.log("Sorting by ID")
+        if (props.searching != '')  {
+            sortBySearch()
+        } else {
+            sortedFiles.value = props.files.sort((a, b) => a.id - b.id)
+        }
     }
 
     function downloadFile(file) {
