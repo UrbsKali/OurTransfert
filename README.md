@@ -1,5 +1,5 @@
 # OurTransfert 
-Wetransfert local replacement, made with Vue 3
+Wetransfer local replacement, made with Vue 3
 
 This is the frontend, the backend is located in [UrbsKali/OurTransfert-server](https://github.com/UrbsKali/OurTransfert-server)
 | File list | Admin controls |
