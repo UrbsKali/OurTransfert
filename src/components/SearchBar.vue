@@ -1,7 +1,28 @@
 <script setup>
+import axios from 'axios'
+import sha256 from 'sha256'
 
-const props = defineProps(['input', 'is_admin', 'password'])
-const emit = defineEmits(['update:input', 'update:is_admin'])
+const props = defineProps(['input', 'is_admin', 'hash_value'])
+const emit = defineEmits(['update:input', 'update:is_admin', 'update:hash_value'])
+
+function checkPassword() {
+    // get sha256 hash of input
+    let hash = sha256(document.querySelector("input").value)
+    console.log(hash)
+    axios
+        .get(`/api/check_secret/${hash}`)
+        .then((response) => {
+            if (response.data.message == true) {
+                console.log("true")
+                emit('update:is_admin', true)
+                emit('update:hash_value', hash)
+                emit('update:input', '')
+                document.querySelector("input").value = ''
+                // add cookie to browser
+                document.cookie = `hash_value=${hash}`
+            }
+        })
+}
 
 let last = ""
 
@@ -26,11 +47,10 @@ window.addEventListener('keydown', (e) => {
         e.stopPropagation();
         document.querySelector('input').blur()
     }
-    if (e.key == " " && last == "Control" && document.querySelector('input').value == props.password) {
+    if (e.key == " " && last == "Control") {
         e.preventDefault()
         e.stopPropagation();
-        document.querySelector("input").value = ''
-        emit('update:is_admin', true)
+        checkPassword()
     }
     last = e.key
 })
@@ -45,7 +65,8 @@ window.addEventListener('keydown', (e) => {
         @focus="setActive()"
         @active="setActive()"
         @blur="setInactive()"
-        
+        @dblclick="checkPassword()"
+
         id="searchBarInput"
           :value="input"
           @input="$emit('update:input', $event.target.value)"
