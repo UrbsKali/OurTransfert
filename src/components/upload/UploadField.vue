@@ -1,115 +1,104 @@
 <script setup lang="ts">
-import { computed, ComputedRef, ref } from "vue";
-import { SelectedFile } from "./types";
-import FileItem from "./FileItem.vue";
-import axios from "axios";
+import { computed, ComputedRef, ref } from 'vue'
+import { SelectedFile } from './types'
+import FileItem from './FileItem.vue'
+import axios from 'axios'
 
 const props = defineProps<{
-  path?: string;
-  hash_value?: string;
-}>();
+  path?: string
+  hash_value?: string
+}>()
 
 // Data
-const selectedFiles = ref([] as SelectedFile[]);
+const selectedFiles = ref([] as SelectedFile[])
 
 const isUploading: ComputedRef<boolean> = computed(() =>
-  selectedFiles.value.some((file) => file.status == "uploading")
-);
+  selectedFiles.value.some((file) => file.status == 'uploading')
+)
 
 // Functions
 const onSelectFiles = (event: Event) => {
-  const target = event.target as HTMLInputElement;
+  const target = event.target as HTMLInputElement
   if (target.files === null) {
-    return;
+    return
   }
 
-  clearFiles();
+  clearFiles()
 
   Array.from(target.files).forEach((file: File) => {
     selectedFiles.value.push({
       file: file,
       percentage: 0,
-      status: "pending",
-    } as SelectedFile);
-  });
-};
+      status: 'pending'
+    } as SelectedFile)
+  })
+}
 
-const clearFiles = () => (selectedFiles.value = []);
+const clearFiles = () => (selectedFiles.value = [])
 
 const uploadSelectedFiles = () => {
   selectedFiles.value.forEach((file: SelectedFile) => {
-    file.status = "uploading";
-    file.percentage = 0;
+    file.status = 'uploading'
+    file.percentage = 0
 
-    uploadFile(file.file, (event: any) => {
-      file.percentage = Math.round((100 * event.loaded) / event.total);
-    }, props.path || "")
+    uploadFile(
+      file.file,
+      (event: any) => {
+        file.percentage = Math.round((100 * event.loaded) / event.total)
+      },
+      props.path || ''
+    )
       .then((response) => {
-        file.status = "success";
+        file.status = 'success'
       })
       .catch(() => {
-        file.status = "failed";
-      });
-  });
-};
+        file.status = 'failed'
+      })
+  })
+}
 
-function uploadFile(file: File, onUploadProgress: any, path: string){
+function uploadFile(file: File, onUploadProgress: any, path: string) {
   // multipart/form-data" for uploading FormData
-    const formData = new FormData()
-    formData.append("files", file);
-    formData.append("secret", props.hash_value || "");
-    
-    return new Promise((resolve, reject) => {
-        axios
-        .post(`/api/upload/${path}`, formData, {
-            headers: {
-            "Content-Type": "multipart/form-data",
-            },
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            onUploadProgress,
-        })
-        .then((response) => {
-            resolve(response);
-        })
-        .catch((error) => {
-            reject(error);
-        });
-    });
+  const formData = new FormData()
+  formData.append('files', file)
+  formData.append('secret', props.hash_value || '')
 
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`/api/upload/${path}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        onUploadProgress
+      })
+      .then((response) => {
+        resolve(response)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
 }
 </script>
 
 <template>
-  <main style="z-index: 101;" id="uploadForm">
+  <main style="z-index: 101" id="uploadForm">
     <div class="wrapper">
       <!-- Files list -->
       <div class="files-list">
-        <b v-if="selectedFiles.length">Files ({{ selectedFiles.length }}):</b>
+        <b v-if="selectedFiles.length">Fichiers ({{ selectedFiles.length }}):</b>
         <!-- File item -->
-        <FileItem
-          v-for="file in selectedFiles"
-          :key="file.file.name"
-          :file="file"
-        />
+        <FileItem v-for="file in selectedFiles" :key="file.file.name" :file="file" />
       </div>
       <!-- Hidden file input -->
-      <input
-        id="selectBtn"
-        type="file"
-        multiple
-        title="Upload file"
-        @change="onSelectFiles"
-      />
+      <input id="selectBtn" type="file" multiple title="Upload file" @change="onSelectFiles" />
       <div class="hr" v-if="selectedFiles.length" />
       <!-- Buttons -->
       <div class="buttons" :class="{ centered: selectedFiles.length === 0 }">
-        <label
-          class="button"
-          :class="{ disabled: isUploading }"
-          for="selectBtn"
-        >
-          Select files
+        <label class="button" :class="{ disabled: isUploading }" for="selectBtn">
+          Choisissez un fichier
         </label>
         <a
           class="button button-danger"
@@ -117,7 +106,7 @@ function uploadFile(file: File, onUploadProgress: any, path: string){
           href="#"
           @click.prevent="clearFiles"
           v-if="selectedFiles.length"
-          >Clear</a
+          >Vider</a
         >
         <a
           class="button button-upload"
@@ -125,7 +114,7 @@ function uploadFile(file: File, onUploadProgress: any, path: string){
           href="#"
           @click.prevent="uploadSelectedFiles"
           v-if="selectedFiles.length"
-          >Upload</a
+          >Uploader</a
         >
       </div>
     </div>
@@ -145,7 +134,7 @@ function uploadFile(file: File, onUploadProgress: any, path: string){
   width: 40vw;
   min-width: 300px;
   padding: 2rem;
-  
+
   border-radius: 0.625rem;
   display: flex;
   flex-direction: column;
@@ -171,7 +160,7 @@ function uploadFile(file: File, onUploadProgress: any, path: string){
   text-decoration: none;
   width: fit-content;
   padding: 0.5rem 1rem;
-  border-radius: .625rem;
+  border-radius: 0.625rem;
 }
 .button:hover {
   background: #3f6cff;
@@ -193,5 +182,4 @@ function uploadFile(file: File, onUploadProgress: any, path: string){
 .button-upload:hover {
   background: #02b97f;
 }
-
 </style>

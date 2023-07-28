@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  progress?: number;
-}>();
+  progress?: number
+}>()
 </script>
 
 <template>

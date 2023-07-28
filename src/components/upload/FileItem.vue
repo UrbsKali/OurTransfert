@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { SelectedFile } from "./types";
-import ProgressBar from "./ProgressBar.vue";
+import { SelectedFile } from './types'
+import ProgressBar from './ProgressBar.vue'
 
 defineProps<{
-  file: SelectedFile;
-}>();
+  file: SelectedFile
+}>()
 </script>
 
 <template>
@@ -12,7 +12,7 @@ defineProps<{
     class="fileitem-wrapper"
     :class="{
       'failed-border': file.status == 'failed',
-      'success-border': file.status == 'success',
+      'success-border': file.status == 'success'
     }"
   >
     <!-- Upper -->
@@ -28,10 +28,7 @@ defineProps<{
         <b class="success">OK</b>
       </span>
       <div class="fileitem-progress">
-        <ProgressBar
-          v-if="file.status == 'uploading'"
-          :progress="file.percentage"
-        />
+        <ProgressBar v-if="file.status == 'uploading'" :progress="file.percentage" />
         <span v-if="file.status == 'uploading'">
           <b> {{ file.percentage }}% </b>
         </span>
