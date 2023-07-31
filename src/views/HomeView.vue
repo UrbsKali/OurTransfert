@@ -3,6 +3,7 @@ import FileList from '../components/FileList.vue'
 import AddButton from '../components/AddButton.vue'
 import SearchBar from '../components/SearchBar.vue'
 import BreadCrumb from '../components/BreadCrumb.vue'
+import AddDirButton from '../components/AddDirButton.vue'
 
 import { ref, watch } from 'vue'
 import axios from 'axios'
@@ -56,8 +57,11 @@ function fetchFiles(path) {
 
 <template>
   <main>
-    <SearchBar v-model:input="search" v-model:is_admin="is_admin" v-model:hash_value="hash_value" />
-    <BreadCrumb :path="path" />
+    <div class="search-zone">
+      <SearchBar v-model:input="search" v-model:is_admin="is_admin" v-model:hash_value="hash_value" />
+      <AddDirButton v-if="is_admin" :hash_value="hash_value" :path="path" />
+    </div>
+    <BreadCrumb v-bind:path="path" />
     <FileList
       :is_admin="is_admin"
       :files="files"
@@ -68,3 +72,12 @@ function fetchFiles(path) {
     <AddButton v-if="is_admin" :hash_value="hash_value" :path="path" />
   </main>
 </template>
+
+<style scoped>
+div.search-zone{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+</style>

@@ -75,6 +75,7 @@ function uploadFile(file: File, onUploadProgress: any, path: string) {
       })
       .then((response) => {
         resolve(response)
+        
       })
       .catch((error) => {
         reject(error)
