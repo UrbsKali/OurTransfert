@@ -9,7 +9,11 @@ function checkPassword() {
   // get sha256 hash of input
   let hash = sha256(document.querySelector('input').value)
   console.log(hash)
-  axios.get(`/api/check_secret/${hash}`).then((response) => {
+  let formData = new FormData()
+  formData.append('secret', hash)
+  axios
+    .post(`/api/check_secret/`, formData)
+    .then((response) => {
     if (response.data.message == true) {
       console.log('true')
       emit('update:is_admin', true)

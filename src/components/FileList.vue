@@ -222,8 +222,9 @@ function deleteFile(file) {
   if (confirm(`Voulez-vous vraiment supprimer ${file.name} ?`)) {
     let formData = new FormData()
     formData.append('secret', props.hash_value)
+    formData.append('path', file.url)
     axios
-      .post(`/api/delete${file.url}`, formData)
+      .post(`/api/delete/`, formData)
       .then(() => {
         props.files.splice(props.files.indexOf(file), 1)
         sortBySearch()

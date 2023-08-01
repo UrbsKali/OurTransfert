@@ -62,10 +62,11 @@ function uploadFile(file: File, onUploadProgress: any, path: string) {
   const formData = new FormData()
   formData.append('files', file)
   formData.append('secret', props.hash_value || '')
+  formData.append('path', path)
 
   return new Promise((resolve, reject) => {
     axios
-      .post(`/api/upload/${path}`, formData, {
+      .post(`/api/upload/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },

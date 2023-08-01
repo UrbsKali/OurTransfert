@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue'
 import axios from 'axios';
 
 const props = defineProps({
@@ -18,7 +17,9 @@ function addDir() {
   let formData = new FormData()
   formData.append('secret', props.hash_value)
   formData.append('name', name)
-  axios.post(`/api/create_dir${props.path}/`, formData)
+  formData.append('path', `${props.path}/`)
+  axios
+  .post(`/api/create_dir/`, formData)
   .then(() => {
     window.location.reload();
   }, (error) => {

@@ -23,7 +23,9 @@ cookies.forEach((cookie) => {
   if (cookie.split('=')[0].trim() === 'hash_value') {
     hash_value.value = cookie.split('=')[1].trim()
     // check if hash value is correct
-    axios.get(`/api/check_secret/${hash_value.value}`).then((response) => {
+    let formData = new FormData()
+    formData.append('secret', hash_value.value)
+    axios.post(`/api/check_secret/`, formData).then((response) => {
       if (response.data.message == true) {
         is_admin.value = true
       }
@@ -37,7 +39,13 @@ watch(path, (newPath) => {
 })
 
 function fetchFiles(path) {
-  axios.get(`/api/get_files/${path}`).then((response) => {
+  let formData = new FormData()
+  formData.append('path', path)
+  axios
+    .post(`/api/get_files/`, formData, 
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+    .then((response) => {
     // add id to all file
     files.value.splice(0, files.value.length)
     response.data.forEach((file, index) => {

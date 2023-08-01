@@ -18,8 +18,10 @@ let file = ref({
   isDir: false
 })
 
+let formData = new FormData()
+formData.append('path', props.src.split('download/')[1])
 axios
-  .get(`/api/file_info/${props.src.split('download/')[1]}`)
+  .post(`/api/file_info/`, formData)
   .then((response) => {
     file.value = {
       name: response.data.Name,
@@ -30,7 +32,6 @@ axios
       url: response.data.Url,
       isDir: response.data.IsDir
     }
-    console.log(file.value)
   })
   .catch((error) => {
     console.log(error)
@@ -38,6 +39,7 @@ axios
 
 function downloadFile(file) {
   const link = document.createElement('a')
+  console.log(file.url)
   link.href = `/api/download/${file.url}`
   link.download = file.name
   link.click()
