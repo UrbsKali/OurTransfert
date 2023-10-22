@@ -49,7 +49,7 @@ function fetchFiles(path) {
   let formData = new FormData()
   formData.append('path', path)
   axios
-    .post(`http://file.urbskali.site/api/get_files/`, formData, 
+    .post(`/api/get_files/`, formData, 
     { headers: { 'Content-Type': 'multipart/form-data' } }
     )
     .then((response) => {
