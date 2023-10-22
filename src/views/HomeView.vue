@@ -8,7 +8,7 @@ import AddDirButton from '../components/AddDirButton.vue'
 import { ref, watch } from 'vue'
 import axios from 'axios'
 
-let is_admin = ref(true)
+let is_admin = ref(false)
 
 let search = ref('')
 let hash_value = ref('')
