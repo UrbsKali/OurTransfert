@@ -126,7 +126,7 @@ watch(
 )
 
 function export_link(file){
-  navigator.clipboard.writeText(`http://file.urbskali.site/download${file.url}`)
+  navigator.clipboard.writeText(`https://file.urbskali.site/download${file.url}`)
   // add nice effect to show that link is copied
   document.getElementById('name').style.color = 'green'
   setTimeout(() => {
