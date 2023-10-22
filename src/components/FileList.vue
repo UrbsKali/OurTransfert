@@ -64,11 +64,15 @@
         <td>{{ file.date }}</td>
         <td>
           <div>
+            <svg @click="export_link(file)" class="export" v-if="(is_admin && !file.isDir)" viewBox="0 0 24 24">
+              <g><rect fill="none" height="24" width="24"/></g><g><g><path d="M18,8h-2c-0.55,0-1,0.45-1,1v0c0,0.55,0.45,1,1,1h2v11H6V10h2c0.55,0,1-0.45,1-1v0c0-0.55-0.45-1-1-1H6c-1.1,0-2,0.9-2,2 v11c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z"/><path d="M12,16L12,16c0.55,0,1-0.45,1-1V5h1.79c0.45,0,0.67-0.54,0.35-0.85l-2.79-2.79c-0.2-0.2-0.51-0.2-0.71,0L8.85,4.15 C8.54,4.46,8.76,5,9.21,5H11v10C11,15.55,11.45,16,12,16z"/></g></g>
+            </svg>
             <svg @click="deleteFile(file)" class="delete" v-if="is_admin" viewBox="0 0 24 24">
               <path
                 d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z"
               ></path>
             </svg>
+
             <svg
               @click="downloadFile(file)"
               v-if="!file.isDir"
@@ -120,6 +124,15 @@ watch(
     sortBySearch()
   }
 )
+
+function export_link(file){
+  navigator.clipboard.writeText(`http://file.urbskali.site/download${file.url}`)
+  // add nice effect to show that link is copied
+  document.getElementById('name').style.color = 'green'
+  setTimeout(() => {
+    document.getElementById('name').style.color = 'rgb(107, 114, 128)'
+  }, 1000)
+}
 
 function changePath(path) {
   console.log(path)

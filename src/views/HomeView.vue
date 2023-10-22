@@ -8,7 +8,7 @@ import AddDirButton from '../components/AddDirButton.vue'
 import { ref, watch } from 'vue'
 import axios from 'axios'
 
-let is_admin = ref(false)
+let is_admin = ref(true)
 
 let search = ref('')
 let hash_value = ref('')
@@ -31,10 +31,17 @@ cookies.forEach((cookie) => {
       }
     })
   }
+  if (cookie.split('=')[0].trim() === 'path') {
+    path.value = cookie.split('=')[1].trim()
+  }
 })
 
 // watch for changes in path
 watch(path, (newPath) => {
+  // create new cookie that last for 10 sec
+  let date = new Date()
+  date.setTime(date.getTime() + 10 * 1000)
+  document.cookie = `path=${newPath}; expires=${date.toUTCString()}; path=/`
   fetchFiles(newPath)
 })
 
@@ -42,7 +49,7 @@ function fetchFiles(path) {
   let formData = new FormData()
   formData.append('path', path)
   axios
-    .post(`/api/get_files/`, formData, 
+    .post(`http://file.urbskali.site/api/get_files/`, formData, 
     { headers: { 'Content-Type': 'multipart/form-data' } }
     )
     .then((response) => {
